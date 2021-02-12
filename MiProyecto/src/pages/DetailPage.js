@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -14,104 +14,148 @@ import {
   View,
   Dimensions,
   Text,
-  Button,
   Image,
   StatusBar,
+  TouchableOpacity,
+
 } from 'react-native';
 
-// import {
-//   Header,
-//   LearnMoreLinks,
-//   Colors,
-//   DebugInstructions,
-//   ReloadInstructions,
-// } from 'react-native/Libraries/NewAppScreen';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-const DetailPage: () => React$Node = ({navigation,route}) =>{
+const DetailPage: () => React$Node = ({navigation, route}) => {
+  
 
-    console.log('objeto venido de resultsPage =>> ' + route.params.article);
-const itemsito = {
-    title:'tituloDetal',
-    extract:'extractoDetail'
-}
+  const [isLoading, setLoading] = useState(true);
+  const [articulo, setData] = useState({title:'Cargando datos...'});
 
-        return (
-            <>
-                <StatusBar barStyle="dark-content" />
-                <SafeAreaView>
-                    <View style={styles.container}>
-                    <Image style={styles.tinyLogo} source={{
-                        uri: 'https://cdn.wpbeaveraddons.com/wp-content/uploads/luca-micheli-422052-unsplash-2.jpg',
-                        }}/>
-                    <View style={styles.body}>
-                        
-                        <Text style={styles.titulo}>Artículo: NOMBRE DE ARTICULO</Text>
-                        <ScrollView>
-                        <View style={styles.containerContenido}>
-                            <Button  onPress= {()=>navigation.navigate('Home')}
-                            title="Ir a Home"
-                            color="#841584" style={styles.boton}/>
-                            <Text style={styles.contenido}>
-                            {itemsito.extract}
-                            </Text>
-                            
-                        </View>
-                        
-                        </ScrollView>
-                    </View>
-                    </View>
-                </SafeAreaView>
-            </>
-        );
-    
-}
+  useEffect(() => {
+    fetch(
+      'https://es.wikipedia.org/w/api.php?action=query&titles=' +
+      route.params.articulo.title +
+        '&prop=extracts&format=json&exintro=1',
+    )
+      .then((response) => response.json())
+      .then((json) => {
+        for(var [key,value] of Object.entries(json.query.pages)){
+          setData({
+            title:value.title,
+            id:value.pageid,
+            extract:value.extract
+          });
+        }
+      })
+      .catch((error) => console.error(error))
+      .finally(() => setLoading(false));
+  }, []);
+<p>calskdjfalsdkjfñalsdkj</p>
+  return (
+    <>
+      <StatusBar barStyle="dark-content" />
+      <SafeAreaView>
+        <View style={styles.container}>
+          <Image
+            style={styles.tinyLogo}
+            source={{
+              uri:
+                'https://cdn.wpbeaveraddons.com/wp-content/uploads/luca-micheli-422052-unsplash-2.jpg',
+            }}
+          />
+          <View style={styles.body}>
 
+            <View style={styles.botones}>
+
+              <View>
+                      <TouchableOpacity
+                        onPress={() => navigation.navigate('Results',{palabra:articulo.title})}
+                        style={styles.botonHome}>
+                        <Text style={styles.textoBoton}>Más resultados</Text>
+                      </TouchableOpacity>
+              </View>
+              <View style={styles.containerBotonResults}>
+                      <TouchableOpacity
+                        onPress={() => navigation.navigate('Home')}
+                        style={styles.botonHome}>
+                        <Text style={styles.textoBoton}>Ir a Home</Text>
+                      </TouchableOpacity>
+              </View>
+
+            </View>
+            
+            <Text style={styles.titulo}>{articulo.title}</Text>
+            <ScrollView>
+              <View style={styles.containerContenido}>
+               
+
+                { isLoading ? (<Text>Cargando...</Text>):(
+                
+                <View>
+                  <Text style={styles.contenido}>{articulo.extract}</Text>
+                  
+                </View>
+                )
+
+                }
+                
+              </View>
+            </ScrollView>
+          </View>
+        </View>
+      </SafeAreaView>
+    </>
+  );
+};
 
 const styles = StyleSheet.create({
-  
- container:{
-     height : windowHeight,
-     width: windowWidth,
-     backgroundColor: '#fff'
- },
- buscador: {
-     flex:2,
-    
- },
- body: {
+  container: {
+    height: windowHeight,
+    width: windowWidth,
+    backgroundColor: '#fff',
+  },
+  body: {
     flex: 6,
-    backgroundColor: '#36454f',
- },
- article: {
-     height: windowHeight/8,
-     backgroundColor: '#fbe870',
-     marginTop: 10,
-     marginHorizontal:10,
-     padding: 10,
-     borderRadius:10
- },
- titulo:{
-    fontSize:20,
-    textAlign:'center',
-    margin:10,
-    fontWeight:'bold',
-    color: '#fff'
- },
- tinyLogo: {
-    flex:2,
+    backgroundColor: '#d6d0c1',
   },
-contenido: {
+  titulo: {
+    fontSize: 20,
+    textAlign: 'center',
+    margin: 10,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  tinyLogo: {
+    flex: 2,
+  },
+  contenido: {
+    color:'black',
+    fontSize: 15,
+    lineHeight: 30,
+    textAlign: 'justify',
+  },
+  containerContenido: {
+    padding: 10,
+  },
+  textoBoton: {
     color: '#fff',
-    fontSize:15,
-    lineHeight:25,
-    textAlign:'justify',  
+    fontWeight: 'bold',
+    margin:5
   },
-  containerContenido:{
-      padding:10
+  botonHome: {
+    backgroundColor: '#004080',
+    elevation: 20,
+    borderRadius: 10,
+    paddingVertical: 10,
+    alignItems: 'center',
+    width:windowWidth/2 - 60
+  },
+  botones:{
+    margin:10,
+    flexDirection:'row',
+    justifyContent:'space-between'
   }
+
+ 
 });
 
 export default DetailPage;

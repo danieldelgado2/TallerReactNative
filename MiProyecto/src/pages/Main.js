@@ -7,21 +7,18 @@ import ResultsPage from './ResultsPage';
 import DetailPage from './DetailPage';
 import HomePage from './HomePage';
 
-
 const Main: () => React$Node = () => {
- 
-    const Stack = createStackNavigator();
-    return (
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen name="Home" component={HomePage} />
-          <Stack.Screen name="Results" component={ResultsPage} />
-          <Stack.Screen name="Detail" component={DetailPage} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    );
-  
-}
+  const Stack = createStackNavigator();
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Home" component={HomePage} />
+        <Stack.Screen name="Results" component={ResultsPage} />
+        <Stack.Screen name="Detail" component={DetailPage} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {

@@ -33,33 +33,31 @@ const windowHeight = Dimensions.get('window').height;
 const ResultsPage: () => React$Node = ({navigation, route}) => {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
-  const [palabra, setPalabra] = useState([]);
-  var palabrita = 'telecommuting';
 
-  const Item = ({item}) => {
-    console.log(route.params.palabra);
-    <TouchableOpacity
-      style={styles.article}
-      onPress={() => navigation.navigate('Detail', {articulo: item})}>
-      <Text style={styles.titulo}>{item.title}</Text>
-      <Text>{item.extract}</Text>
-    </TouchableOpacity>;
-  };
+
+  const renderItem = ({item}) => ( <TouchableOpacity
+    style={styles.article}
+    onPress={() => navigation.navigate('Detail', {articulo: item})}>
+    <Text style={styles.tituloArticulo}>{item.title}</Text>
+  </TouchableOpacity>);
 
   useEffect(() => {
     fetch(
-      'https://en.wikipedia.org/w/api.php?action=query&titles=' +
-        palabrita +
-        '&prop=extracts&format=json&exintro=1',
+      'https://es.wikipedia.org/w/api.php?action=query&list=search&srprop=snippet&format=json&origin=*&utf8=&srsearch=' +
+        route.params.palabra,
     )
       .then((response) => response.json())
       .then((json) => {
-        let paginas = [];
-        for (var [key, value] of Object.entries(json.query.pages)) {
-          // value.extract = value.extract.replace(/<.*\n*>/mg,)
-          paginas.push(value);
-        }
-        setData(paginas);
+        let lista = [];
+        json.query.search.forEach((elemento) => {
+          let jsonDatos = {
+            id: elemento.pageid.toString(),
+            title: elemento.title,
+          };
+
+          lista.push(jsonDatos);
+        });
+        setData(lista);
       })
       .catch((error) => console.error(error))
       .finally(() => setLoading(false));
@@ -80,12 +78,12 @@ const ResultsPage: () => React$Node = ({navigation, route}) => {
           <View style={styles.body}>
             <Text style={styles.titulo}>Resultados de la búsqueda</Text>
             {isLoading ? (
-              <Text>Cargando...</Text>
+              <Text>Cargando datos...</Text>
             ) : (
               <FlatList
                 data={data}
-                renderItem={({item}) => <Item item={item} />}
-                keyExtractor={(item) => item.pageid.toString()}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id}
               />
             )}
           </View>
@@ -101,22 +99,27 @@ const styles = StyleSheet.create({
     width: windowWidth,
     backgroundColor: '#fff',
   },
-  buscador: {
-    flex: 2,
-  },
   body: {
     flex: 6,
-    backgroundColor: '#36454f',
+    backgroundColor: '#d6d0c1',
   },
   article: {
-    height: windowHeight / 8,
-    backgroundColor: '#fbe870',
+    backgroundColor: '#004080',
     marginTop: 10,
     marginHorizontal: 10,
     padding: 10,
     borderRadius: 10,
+    justifyContent: 'center',
+    elevation: 100,
   },
   titulo: {
+    fontSize: 20,
+    textAlign: 'center',
+    margin: 10,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  tituloArticulo: {
     fontSize: 20,
     textAlign: 'center',
     margin: 10,
