@@ -12,9 +12,24 @@ const Main: () => React$Node = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={HomePage} />
-        <Stack.Screen name="Results" component={ResultsPage} />
-        <Stack.Screen name="Detail" component={DetailPage} />
+        <Stack.Screen name="Home" component={HomePage} options={{
+              title: 'Home',
+              headerStyle: {
+                backgroundColor: '#ffdead',
+              },
+            }}/>
+        <Stack.Screen name="Results" component={ResultsPage} options={{
+              title: 'Resultados',
+              headerStyle: {
+                backgroundColor: '#ffdead',
+              },
+            }}/>
+        <Stack.Screen name="Detail" component={DetailPage} options={{
+              title: 'Detalles del artículo',
+              headerStyle: {
+                backgroundColor: '#ffdead',
+              },
+            }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

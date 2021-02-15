@@ -91,12 +91,12 @@ const styles = StyleSheet.create({
   container: {
     height: windowHeight,
     width: windowWidth,
-    backgroundColor: '#d6d0c1',
+    backgroundColor: '#ffdead',
   },
 
   body: {
     flex: 10,
-    backgroundColor: '#d6d0c1',
+    backgroundColor: '#ffdead',
   },
   article: {
     height: windowHeight / 10,
@@ -108,9 +108,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: 'center',
     elevation: 20,
+    borderWidth:2,
+    borderColor:'#0f1414'
   },
   fotoBanner: {
     flex: 5,
+    
   },
   titulo: {
     fontSize: 20,
@@ -125,6 +128,7 @@ const styles = StyleSheet.create({
     margin: 10,
     flexDirection: 'row',
     alignItems: 'center',
+    elevation:20
   },
   containerInputBuscador: {
     margin: 10,

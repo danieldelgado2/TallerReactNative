@@ -17,12 +17,15 @@ import {
   Image,
   StatusBar,
   TouchableOpacity,
-
+  ActivityIndicator
 } from 'react-native';
 
+import HTML from 'react-native-render-html';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
+
+
 
 const DetailPage: () => React$Node = ({navigation, route}) => {
   
@@ -32,9 +35,7 @@ const DetailPage: () => React$Node = ({navigation, route}) => {
 
   useEffect(() => {
     fetch(
-      'https://es.wikipedia.org/w/api.php?action=query&titles=' +
-      route.params.articulo.title +
-        '&prop=extracts&format=json&exintro=1',
+      'https://es.wikipedia.org/w/api.php?action=query&titles=' + route.params.articulo.title + '&prop=extracts&format=json&exintro=1',
     )
       .then((response) => response.json())
       .then((json) => {
@@ -49,58 +50,44 @@ const DetailPage: () => React$Node = ({navigation, route}) => {
       .catch((error) => console.error(error))
       .finally(() => setLoading(false));
   }, []);
-<p>calskdjfalsdkjfñalsdkj</p>
   return (
     <>
       <StatusBar barStyle="dark-content" />
       <SafeAreaView>
-        <View style={styles.container}>
-          <Image
-            style={styles.tinyLogo}
-            source={{
-              uri:
-                'https://cdn.wpbeaveraddons.com/wp-content/uploads/luca-micheli-422052-unsplash-2.jpg',
-            }}
-          />
-          <View style={styles.body}>
-
-            <View style={styles.botones}>
-
+        <View>
+          <ScrollView style={styles.scrollView}>
+            <Image
+              style={styles.imagen}
+              source={{
+                uri:
+                  'https://cdn.wpbeaveraddons.com/wp-content/uploads/luca-micheli-422052-unsplash-2.jpg',
+              }}
+            />
+            <View style={styles.viewBotones}>
               <View>
-                      <TouchableOpacity
-                        onPress={() => navigation.navigate('Results',{palabra:articulo.title})}
-                        style={styles.botonHome}>
-                        <Text style={styles.textoBoton}>Más resultados</Text>
-                      </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('Results',{palabra:articulo.title})}
+                  style={styles.boton}>
+                  <Text style={styles.textoBoton}>Más resultados</Text>
+                </TouchableOpacity>
               </View>
-              <View style={styles.containerBotonResults}>
-                      <TouchableOpacity
-                        onPress={() => navigation.navigate('Home')}
-                        style={styles.botonHome}>
-                        <Text style={styles.textoBoton}>Ir a Home</Text>
-                      </TouchableOpacity>
+              <View>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('Home')}
+                  style={styles.boton}>
+                  <Text style={styles.textoBoton}>Ir a Home</Text>
+                </TouchableOpacity>
               </View>
-
             </View>
-            
             <Text style={styles.titulo}>{articulo.title}</Text>
-            <ScrollView>
-              <View style={styles.containerContenido}>
-               
-
-                { isLoading ? (<Text>Cargando...</Text>):(
-                
-                <View>
-                  <Text style={styles.contenido}>{articulo.extract}</Text>
-                  
-                </View>
-                )
-
-                }
-                
-              </View>
-            </ScrollView>
-          </View>
+            <View style={styles.viewExtracto}>
+              { isLoading ? 
+                (<ActivityIndicator size={"large"} color={"#0000ff"}/>)
+                :
+                (<HTML source={{ html: `<head><style>*:{font-size:40;}</style></head><body>` + articulo.extract + `</body>`}}/>)
+              }
+            </View>
+          </ScrollView>
         </View>
       </SafeAreaView>
     </>
@@ -108,40 +95,26 @@ const DetailPage: () => React$Node = ({navigation, route}) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    height: windowHeight,
-    width: windowWidth,
-    backgroundColor: '#fff',
-  },
-  body: {
-    flex: 6,
-    backgroundColor: '#d6d0c1',
-  },
+
   titulo: {
     fontSize: 20,
     textAlign: 'center',
-    margin: 10,
     fontWeight: 'bold',
     color: '#000',
   },
-  tinyLogo: {
-    flex: 2,
+  imagen: {
+   height:windowHeight/3,
+   width:windowWidth
   },
-  contenido: {
-    color:'black',
-    fontSize: 15,
-    lineHeight: 30,
-    textAlign: 'justify',
-  },
-  containerContenido: {
-    padding: 10,
+  scrollView: {
+    backgroundColor:'#ffdead',
   },
   textoBoton: {
     color: '#fff',
     fontWeight: 'bold',
     margin:5
   },
-  botonHome: {
+  boton: {
     backgroundColor: '#004080',
     elevation: 20,
     borderRadius: 10,
@@ -149,13 +122,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width:windowWidth/2 - 60
   },
-  botones:{
+  viewBotones:{
     margin:10,
     flexDirection:'row',
-    justifyContent:'space-between'
+    justifyContent:'space-between',
+  },
+  viewExtracto:{
+    height:windowHeight/2,
+    marginHorizontal:10,
+    marginBottom:10
   }
-
- 
 });
 
 export default DetailPage;

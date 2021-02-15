@@ -17,6 +17,7 @@ import {
   Image,
   FlatList,
   StatusBar,
+  ActivityIndicator
 } from 'react-native';
 
 // import {
@@ -78,7 +79,12 @@ const ResultsPage: () => React$Node = ({navigation, route}) => {
           <View style={styles.body}>
             <Text style={styles.titulo}>Resultados de la búsqueda</Text>
             {isLoading ? (
-              <Text>Cargando datos...</Text>
+              <View>
+                <Text style={styles.titulo}>Cargando datos...</Text>
+                <View>
+                  <ActivityIndicator size={"large"} color={"#0000ff"}/>
+                </View>
+              </View>
             ) : (
               <FlatList
                 data={data}
@@ -101,7 +107,7 @@ const styles = StyleSheet.create({
   },
   body: {
     flex: 6,
-    backgroundColor: '#d6d0c1',
+    backgroundColor: '#ffdead',
   },
   article: {
     backgroundColor: '#004080',
@@ -110,7 +116,9 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     justifyContent: 'center',
-    elevation: 100,
+    elevation: 20,
+    borderWidth:2,
+    borderColor:'#0f1414'
   },
   titulo: {
     fontSize: 20,
